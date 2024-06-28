@@ -16,53 +16,6 @@ year = ""
 dateRegex = re.compile(r'''\d{1,2}\/\d{1,2}\/\d{2,4}''')#This just looks for the patern
 #you will have to check it to make sure it is right 
 
-#todo:comfirm that the date is valid
-dayscheck = int(days)
-mothcheck = int(month)
-yearcheck = int(year)
-leapyear = yearcheck % 4
-
-def ValidDate(days,month,year):
-  days = dayscheck
-  month = mothcheck
-  year = yearcheck
-  if days <= 31 and month <=12 and year <= 2999:
-    return True
-  else:
-    return False
-
-
-def ValidMonthdayCheck(month,date):
-    month = mothcheck
-    date = dayscheck
-
-    if  month == 6 or month == 9 or month == 10:
-         if date <= 30:
-              return True
-    if  month != 6 or month != 9 or month != 10:
-         if date <= 31:
-              return True
-              
-         
-def Leapcheck (leap,days,month):
-    days = dayscheck
-    month = mothcheck
-    leap = leapyear
-    if month == 4:
-         
-        if leap == 0:
-             if days <= 29:
-                  return True
-             elif days > 29:
-                  return False
-        else:
-         if leap != 0:
-              if days <=28:
-                   return True
-              else:
-                   return False
-    
-
 for dates in dateRegex.findall(text):
     for i in dates:
         #counter to track where you are in string it is +1 indexed 
@@ -73,61 +26,73 @@ for dates in dateRegex.findall(text):
             month += i
         elif counter > 6:
             year += i
-    if counter > 10:
-        ValidDate(dayscheck,mothcheck,yearcheck)
-        ValidMonthdayCheck(mothcheck,dayscheck)
-        Leapcheck(leapyear,dayscheck,mothcheck)
+    if counter > 9:
+        checks = True
 
-    
-         
-
-if ValidDate == True:
-    if ValidMonthdayCheck == True:
-         if Leapcheck == True:
-              counter = 0
-              mathces.append(dates)
-              dayscheck = ""
-              mothcheck = ""
-              yearcheck = ""
-else:
-    ValidDate = False
-    ValidMonthdayCheck = False
-    Leapcheck = False
-    rejected.append(dates)
-    counter = 0
-    dayscheck = ''
-    mothcheck = ''
-    yearcheck = ''
-#left off here last night might need tweaked tomorrow while testing 
-
-
-'''
+#todo:comfirm that the date is valid
+    dayscheck = int(days)
+    mothcheck = int(month)
+    yearcheck = int(year)
+    leapyear = yearcheck % 4
 
     while checks == True:
         if dayscheck <= 31 and mothcheck <= 12 and yearcheck <= 2999:
              checks = True
-        if mothcheck == 4 or mothcheck == 6 or mothcheck == 9 or mothcheck == 10 and dayscheck >= 30:
+        if dayscheck > 31 or mothcheck > 12 or yearcheck > 2999:
+              rejected.append(dates)
+              counter = 0
+              days= ''
+              month = ''
+              year = ''                                 #logic for dates that dont meet the rage 
+              checks = False
+              break
+        if  mothcheck == 6 or mothcheck == 9 or mothcheck == 10 and dayscheck <= 30: #months with 30 days check 
                         checks = True
-        elif mothcheck == 4 or mothcheck == 6 or mothcheck == 9 or mothcheck == 10 and dayscheck <= 31:
+        elif  mothcheck == 6 or mothcheck == 9 or mothcheck == 10 and dayscheck <= 31: #if over 30 rejcts it not valid 
                         rejected.append(dates)
                         counter = 0
                         checks = False
                         days = ""
                         month = ""
                         year = ""
+                        break
 
-
-        else:
+        if leapyear == 0 and mothcheck == 2: #checks leap year 
+              if dayscheck <= 29:
                 mathces.append(dates)
                 checks = False
                 counter = 0
                 days = ""
                 month = ""
                 year = ""
+                break
+        elif leapyear != 0 and mothcheck == 2:
+              if dayscheck <= 28:
+                    mathces.append(dates)
+                    checks = False
+                    counter = 0
+                    days = ''
+                    month = ''
+                    year = ''
+                    break
+        elif mothcheck == 2 and dayscheck > 29:
+              rejected.append(dates)
+              checks = False
+              counter = 0
+              days = ''
+              month = ''
+              year = ''
+              break
+        else:
+              mathces.append(dates)
+              counter = 0
+              days = ''
+              month = ''
+              year = ''
+              checks = False
 
-
-  '''      
+        
 
 #todo:Display the matches in a good fashion and copy to clipboard 
 for i in mathces:
-    print(f'{i}')
+    print(f'* {i}')
